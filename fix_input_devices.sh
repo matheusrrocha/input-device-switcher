@@ -11,9 +11,15 @@ MICROPHONE="$1"
 
 while true; do
     CURRENT_INPUT=$($SWITCH_AUDIO_SOURCE -t input -c)
+    AVAILABLE_DEVICES=$($SWITCH_AUDIO_SOURCE -t input -a)
 
-    if [ "$CURRENT_INPUT" != "$MICROPHONE" ]; then
-        $SWITCH_AUDIO_SOURCE -t input -s "$MICROPHONE"
+    # Check if the desired microphone is available
+    if echo "$AVAILABLE_DEVICES" | grep -q "$MICROPHONE"; then
+        if [ "$CURRENT_INPUT" != "$MICROPHONE" ]; then
+            $SWITCH_AUDIO_SOURCE -t input -s "$MICROPHONE"
+        fi
+    else
+        echo "Device '$MICROPHONE' not available. Skipping change."
     fi
 
     sleep 5
